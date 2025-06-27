@@ -63,9 +63,27 @@ def add_book_manual(catalog: List[List[Any]]) -> None:
 def informe_total_ejemplares(catalog: List[List[Any]]) -> str:
     return f"Total de ejemplares: {len(catalog)}"
 
+
+def get_genero(catalog: List[List[Any]]) -> str:
+
+    total_genre = []
+
+    for row in catalog:
+        genre = row[INDEX_GENERO].lower().title()
+        if genre not in total_genre:
+            total_genre.append(genre)
+    
+    return total_genre
+
 def informe_por_genero(catalog: List[List[Any]], genre: str) -> str:
-    total_genre = sum(1 for row in catalog if len(row) > INDEX_GENERO and row[INDEX_GENERO] == genre)
-    return f"El género '{genre}' tiene un total de {total_genre} ejemplares."
+
+    parsed_genre = genre.lower().title()
+
+    if parsed_genre in get_genero(catalog):
+        total_genre = sum(1 for row in catalog if len(row) > INDEX_GENERO and row[INDEX_GENERO].lower().title() == parsed_genre)
+        return f"El género '{parsed_genre}' tiene un total de {total_genre} ejemplares."
+    else:
+        return f"El género '{genre}' no se encuentra en el catálogo."
 
 def informe_promedio_anio(catalog: List[List[Any]], index_year: int) -> float:
     total_years = 0
@@ -104,6 +122,9 @@ def display_catalog(catalog: List[List[Any]], limit: int) -> None:
     for count, row in enumerate(catalog[:limit]):
         print(f"{count + 1}. Título: {row[INDEX_TITULO]}, Autor: {row[INDEX_AUTOR]}, Año: {row[INDEX_PRIMERA_PUBLICACION]}, Género: {row[INDEX_GENERO]}")
     print("----------------")
+
+
+
 
 def guardar_resumen_json(nombre_archivo: str, catalog: List[List[Any]]) -> None:
     años = [int(row[INDEX_PRIMERA_PUBLICACION]) for row in catalog if row[INDEX_PRIMERA_PUBLICACION].isdigit()]
@@ -147,8 +168,16 @@ def menu() -> None:
         elif opcion == "2":
             print(informe_total_ejemplares(catalog))
         elif opcion == "3":
-            genre = input("Ingrese el género a buscar: ")
-            print(informe_por_genero(catalog, genre))
+            available_genres = get_genero(catalog)
+            if len(available_genres) > 0:
+                print("Los géneros disponibles son: " + ", ".join(available_genres))
+                genre = send_message("Ingrese el género a buscar: ", str)
+
+                print(informe_por_genero(catalog, genre))
+            else:
+                print("No se encontraron géneros disponibles.")
+
+            
         elif opcion == "4":
             promedio = informe_promedio_anio(catalog, INDEX_PRIMERA_PUBLICACION)
             print(f"Año promedio de publicación: {promedio:.2f}")
