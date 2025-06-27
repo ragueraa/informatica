@@ -1,3 +1,4 @@
+from pprint import pprint
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from typing import List, Tuple, Any
@@ -13,7 +14,7 @@ INDEX_PRIMERA_PUBLICACION = 3
 INDEX_VENTAS_MILLONES = 4
 INDEX_GENERO = 5
 
-def load_from_csv(filepath: str) -> List[List[Any]]:
+def load_from_csv(filepath: str) -> list:
     """Carga el catálogo desde un CSV y devuelve una lista de registros."""
     with open(filepath, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
@@ -27,6 +28,7 @@ def check_entry_int(input_str: str) -> bool:
 def send_message(message: str, expected_type: type) -> Any:
     while True:
         entry = input(message)
+        print("Ingresa '0' para salir en cualquier momento.")
         if entry == "0":
             print("Saliendo...")
             return None
@@ -42,7 +44,7 @@ def send_message(message: str, expected_type: type) -> Any:
             else:
                 return entry
 
-def add_book_manual(catalog: List[List[Any]]) -> None:
+def add_book_manual(catalog: list) -> None:
     """Pide datos por teclado y añade un nuevo libro al catálogo y al archivo CSV."""
     print("Añadiendo un nuevo libro al catálogo...")
     print("Presiona 0 en cualquier momento para salir.")
@@ -69,11 +71,11 @@ def add_book_manual(catalog: List[List[Any]]) -> None:
 
     print(f"Libro '{title}' añadido al catálogo y guardado en 'libros.csv'.")
 
-def informe_total_ejemplares(catalog: List[List[Any]]) -> str:
+def informe_total_ejemplares(catalog: list) -> str:
     return f"Total de ejemplares: {len(catalog)}"
 
 
-def get_genero(catalog: List[List[Any]]) -> str:
+def get_genero(catalog) -> str:
 
     total_genre = []
 
@@ -84,7 +86,7 @@ def get_genero(catalog: List[List[Any]]) -> str:
     
     return total_genre
 
-def informe_por_genero(catalog: List[List[Any]], genre: str) -> str:
+def informe_por_genero(catalog, genre: str) -> str:
 
     parsed_genre = genre.lower().title()
 
@@ -94,7 +96,7 @@ def informe_por_genero(catalog: List[List[Any]], genre: str) -> str:
     else:
         return f"El género '{genre}' no se encuentra en el catálogo."
 
-def informe_promedio_anio(catalog: List[List[Any]], index_year: int) -> float:
+def informe_promedio_anio(catalog, index_year: int) -> float:
     total_years = 0
     count = 0
     for row in catalog:
@@ -103,21 +105,54 @@ def informe_promedio_anio(catalog: List[List[Any]], index_year: int) -> float:
             count += 1
     return total_years / count if count else 0.0
 
-def informe_libros_viejos(catalog: List[List[Any]], year_cutoff: int, index_year: int) -> List[List[Any]]:
+def informe_libros_viejos(catalog, year_cutoff: int, index_year: int) -> list:
     return [row for row in catalog if len(row) > index_year and row[index_year].isdigit() and int(row[index_year]) < year_cutoff]
 
-def informe_top_autores(catalog: List[List[Any]], top_n: int = 3) -> List[Tuple[str, int]]:
-    autores = [row[INDEX_AUTOR] for row in catalog if len(row) > INDEX_AUTOR]
-    return Counter(autores).most_common(top_n)
+def informe_top_autores(catalog, top_n: int = 3) -> list:
+    
+    autores = []
 
-def bubble_sort_titulo(catalog: List[List[Any]]) -> None:
+    for row in catalog:
+        if len(row) > INDEX_AUTOR and row[INDEX_AUTOR] not in autores:
+            autores.append(row[INDEX_AUTOR])
+    
+    counter = []
+
+    for autor in autores:
+        n = 0
+        for row in catalog:
+            if  len(row) > INDEX_AUTOR and row[INDEX_AUTOR] == autor :
+                n+= 1
+        counter.append((autor, n))
+
+    print("Autores y sus conteos:", counter)
+
+
+    #insertion sort desc
+
+    for i in range(1, len(counter)):
+        valor_actual = counter[i]
+        j = i - 1
+
+        while j >= 0 and counter[j][1] < valor_actual[1]:
+            counter[j + 1] = counter[j]
+            j -= 1
+        counter[j + 1] = valor_actual
+
+    
+    return counter[:top_n] if len(counter) > top_n else counter
+
+
+
+    
+def bubble_sort_titulo(catalog:list) -> None:
     n = len(catalog)
     for i in range(n):
         for j in range(0, n - i - 1):
             if catalog[j][INDEX_TITULO] > catalog[j + 1][INDEX_TITULO]:
                 catalog[j], catalog[j + 1] = catalog[j + 1], catalog[j]
 
-def insertion_sort_anio(catalog: List[List[Any]]) -> None:
+def insertion_sort_anio(catalog: list) -> None:
     for i in range(1, len(catalog)):
         key = catalog[i]
         j = i - 1
@@ -126,7 +161,7 @@ def insertion_sort_anio(catalog: List[List[Any]]) -> None:
             j -= 1
         catalog[j + 1] = key
 
-def display_catalog(catalog: List[List[Any]], limit: int) -> None:
+def display_catalog(catalog: list, limit: int) -> None:
     print("\n--- Catálogo ---")
     for count, row in enumerate(catalog[:limit]):
         print(f"{count + 1}. Título: {row[INDEX_TITULO]}, Autor: {row[INDEX_AUTOR]}, Año: {row[INDEX_PRIMERA_PUBLICACION]}, Género: {row[INDEX_GENERO]}")
@@ -135,7 +170,7 @@ def display_catalog(catalog: List[List[Any]], limit: int) -> None:
 
 
 
-def guardar_resumen_json(nombre_archivo: str, catalog: List[List[Any]]) -> None:
+def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
     años = [int(row[INDEX_PRIMERA_PUBLICACION]) for row in catalog if row[INDEX_PRIMERA_PUBLICACION].isdigit()]
     libro_mas_antiguo = min(años) if años else None
     libro_mas_reciente = max(años) if años else None
