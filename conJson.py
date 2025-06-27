@@ -64,8 +64,13 @@ def informe_total_ejemplares(catalog: List[List[Any]]) -> str:
     return f"Total de ejemplares: {len(catalog)}"
 
 def informe_por_genero(catalog: List[List[Any]], genre: str) -> str:
-    total_genre = sum(1 for row in catalog if len(row) > INDEX_GENERO and row[INDEX_GENERO] == genre)
+    genre_normalizado = genre.strip().lower()
+    total_genre = sum(
+        1 for row in catalog
+        if len(row) > INDEX_GENERO and row[INDEX_GENERO].strip().lower() == genre_normalizado
+    )
     return f"El género '{genre}' tiene un total de {total_genre} ejemplares."
+
 
 def informe_promedio_anio(catalog: List[List[Any]], index_year: int) -> float:
     total_years = 0
