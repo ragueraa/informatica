@@ -14,7 +14,7 @@ INDEX_PRIMERA_PUBLICACION = 3
 INDEX_VENTAS_MILLONES = 4
 INDEX_GENERO = 5
 
-def load_from_csv(filepath: str) -> list:
+def get_catalog(filepath: str = "libros.csv") -> list:
     """Carga el catálogo desde un CSV y devuelve una lista de registros."""
     with open(filepath, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
@@ -73,7 +73,6 @@ def add_book_manual(catalog: list) -> None:
 
 def informe_total_ejemplares(catalog: list) -> str:
     return f"Total de ejemplares: {len(catalog)}"
-
 
 def get_genero(catalog) -> str:
 
@@ -167,9 +166,6 @@ def display_catalog(catalog: list, limit: int) -> None:
         print(f"{count + 1}. Título: {row[INDEX_TITULO]}, Autor: {row[INDEX_AUTOR]}, Año: {row[INDEX_PRIMERA_PUBLICACION]}, Género: {row[INDEX_GENERO]}")
     print("----------------")
 
-
-
-
 def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
     años = [int(row[INDEX_PRIMERA_PUBLICACION]) for row in catalog if row[INDEX_PRIMERA_PUBLICACION].isdigit()]
     libro_mas_antiguo = min(años) if años else None
@@ -190,21 +186,57 @@ def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
 
     print(f"Resumen guardado en '{nombre_archivo}'")
 
+def show_main_menu() -> None:
+    print("\nMenú:")
+    print("1. Añadir libro manualmente")
+    print("2. Informe total de ejemplares")
+    print("3. Informe por género")
+    print("4. Informe promedio de año")
+    print("5. Informe libros viejos")
+    print("6. Informe top autores")
+    print("7. Mostrar catálogo")
+    print("8. Resumen de catálogo en JSON")
+    print("0. Salir")
+
+def handle_promedio_anio(catalog: list) -> None:
+    promedio = informe_promedio_anio(catalog, INDEX_PRIMERA_PUBLICACION)
+    print(f"Año promedio de publicación: {promedio:.2f}")
+
+def handle_informe_libros_viejos(catalog: list) -> None:
+    corte = send_message("Mostrar libros anteriores a qué año?: ", int)
+    if corte is not None:
+        viejos = informe_libros_viejos(catalog, corte, INDEX_PRIMERA_PUBLICACION)
+        print(f"Libros publicados antes de {corte}:")
+        for libro in viejos:
+            print(libro)
+
+def handle_top_autores(catalog: list) -> None:
+    top = informe_top_autores(catalog)
+    print("Autores más frecuentes:")
+    for autor, cantidad in top:
+        print(f"{autor}: {cantidad}")
+
+def handle_catalogo(catalog: list) -> None:
+    limit = send_message("¿Cuántos libros mostrar?: ", int)
+    if limit is not None:
+        display_catalog(catalog, limit)
+
+def handle_informe_genero(catalog: list) -> None:
+    available_genres = get_genero(catalog)
+    if len(available_genres) > 0:
+        print("Los géneros disponibles son: " + ", ".join(available_genres))
+        genre = send_message("Ingrese el género a buscar: ", str)
+
+        print(informe_por_genero(catalog, genre))
+    else:
+        print("No se encontraron géneros disponibles.")
 
 def menu() -> None:
-    catalog = load_from_csv("libros.csv")
-    while True:
-        print("\nMenú:")
-        print("1. Añadir libro manualmente")
-        print("2. Informe total de ejemplares")
-        print("3. Informe por género")
-        print("4. Informe promedio de año")
-        print("5. Informe libros viejos")
-        print("6. Informe top autores")
-        print("7. Mostrar catálogo")
-        print("8. Resumen de catálogo en JSON")
-        print("0. Salir")
+    catalog = get_catalog()
 
+    while True:
+        
+        show_main_menu()
         opcion = input("Selecciona una opción: ")
 
         if opcion == "1":
@@ -212,35 +244,15 @@ def menu() -> None:
         elif opcion == "2":
             print(informe_total_ejemplares(catalog))
         elif opcion == "3":
-            available_genres = get_genero(catalog)
-            if len(available_genres) > 0:
-                print("Los géneros disponibles son: " + ", ".join(available_genres))
-                genre = send_message("Ingrese el género a buscar: ", str)
-
-                print(informe_por_genero(catalog, genre))
-            else:
-                print("No se encontraron géneros disponibles.")
-
-            
+            handle_informe_genero(catalog)
         elif opcion == "4":
-            promedio = informe_promedio_anio(catalog, INDEX_PRIMERA_PUBLICACION)
-            print(f"Año promedio de publicación: {promedio:.2f}")
+            handle_promedio_anio(catalog)
         elif opcion == "5":
-            corte = send_message("Mostrar libros anteriores a qué año?: ", int)
-            if corte is not None:
-                viejos = informe_libros_viejos(catalog, corte, INDEX_PRIMERA_PUBLICACION)
-                print(f"Libros publicados antes de {corte}:")
-                for libro in viejos:
-                    print(libro)
+            handle_informe_libros_viejos(catalog)
         elif opcion == "6":
-            top = informe_top_autores(catalog)
-            print("Autores más frecuentes:")
-            for autor, cantidad in top:
-                print(f"{autor}: {cantidad}")
+            handle_top_autores(catalog)
         elif opcion == "7":
-            limit = send_message("¿Cuántos libros mostrar?: ", int)
-            if limit is not None:
-                display_catalog(catalog, limit)
+            handle_catalogo(catalog)
         elif opcion == "8":
             guardar_resumen_json("resumen.json", catalog)
         elif opcion == "0":
