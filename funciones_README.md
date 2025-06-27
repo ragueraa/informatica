@@ -219,22 +219,11 @@ El módulo define constantes para acceder a los campos del catálogo de libros:
 
 ### **Algoritmos Implementados**
 1. **Insertion Sort**: Para ordenar tuplas por frecuencia
-2. **Bubble Sort**: Para ordenar catálogo por título
-3. **Algoritmos de conteo**: Para análisis estadístico
-4. **Filtrado y mapeo**: Para procesamiento de datos
 
 ### **Características Técnicas**
 - **Manejo de archivos**: CSV para persistencia, JSON para exportación
 - **Validación robusta**: Verificación de longitud de registros y tipos de datos
 - **Normalización de datos**: Consistencia en mayúsculas/minúsculas
-- **Eficiencia**: Algoritmos apropiados para el tamaño de datos esperado
-- **Escalabilidad**: Funciones genéricas reutilizables
-
-### **Consideraciones de Rendimiento**
-- Los algoritmos de ordenamiento son O(n²) pero apropiados para catálogos medianos
-- Las funciones de conteo son O(n) para cada categoría
-- El manejo de archivos es eficiente con codificación UTF-8
-- La estructura de datos simple (listas) facilita el procesamiento
 
 ### **Extensibilidad**
 - Los índices constantes facilitan cambios en la estructura de datos
