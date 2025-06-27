@@ -22,10 +22,11 @@ def get_catalog(filepath: str = "libros.csv") -> list:
     return books
 
 def check_entry_int(input_str: str) -> bool:
+    """Verifica si la entrada es un número entero."""
     return input_str.isdigit()
 
 def add_book_manual(new_book: list, catalog: list) -> None:
-
+    """Añade un nuevo libro al catálogo y al archivo CSV."""
     # Escribir en el CSV
     with open("libros.csv", "a", newline='', encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -36,9 +37,12 @@ def add_book_manual(new_book: list, catalog: list) -> None:
     return catalog
 
 def informe_total_ejemplares(catalog: list) -> int:
+    """Devuelve el total de ejemplares en el catálogo."""
     return len(catalog)
 
 def get_genero(catalog) -> str:
+
+    """Devuelve una lista de géneros únicos en el catálogo."""
 
     total_genre = []
 
@@ -51,6 +55,8 @@ def get_genero(catalog) -> str:
 
 def informe_por_genero(catalog, genre: str) -> str:
 
+    """Devuelve el total de libros por género."""
+
     parsed_genre = genre.lower().title()
 
     total_genre = 0
@@ -61,6 +67,8 @@ def informe_por_genero(catalog, genre: str) -> str:
     return total_genre
 
 def informe_promedio_anio(catalog) -> float:
+
+    """Devuelve el año promedio de publicación de los libros en el catálogo."""
     total_years = 0
     count = 0
     for row in catalog:
@@ -70,6 +78,7 @@ def informe_promedio_anio(catalog) -> float:
     return total_years // count if count else 0
 
 def informe_libros_viejos(catalog, year_cutoff: int) -> list:
+    """Devuelve una lista de libros publicados antes de un año específico."""
     libros_viejos = [row for row in catalog if len(row) > INDEX_PRIMERA_PUBLICACION and row[INDEX_PRIMERA_PUBLICACION].isdigit() and int(row[INDEX_PRIMERA_PUBLICACION]) < year_cutoff]
 
     libros_viejos = display_catalog(libros_viejos, len(libros_viejos))
@@ -77,6 +86,7 @@ def informe_libros_viejos(catalog, year_cutoff: int) -> list:
     return libros_viejos
 
 def informe_top_autores(catalog, top_n: int = 3) -> list:
+    """Devuelve una lista de los autores más frecuentes en el catálogo."""
     
     autores = cantidad_ordenada_por_categoria_desc(catalog, INDEX_AUTOR)
     if autores:
@@ -84,6 +94,7 @@ def informe_top_autores(catalog, top_n: int = 3) -> list:
     return []
 
 def insertion_sort_tuple_desc(counter: list) -> list:
+    """Ordena una lista de tuplas en orden descendente por el segundo elemento."""
 
     for i in range(1, len(counter)):
         valor_actual = counter[i]
@@ -97,6 +108,8 @@ def insertion_sort_tuple_desc(counter: list) -> list:
     return counter
 
 def cantidad_ordenada_por_categoria_desc(catalog: list, index_categoria) -> tuple:
+
+    """Devuelve una lista de tuplas con la cantidad de libros por categoría, ordenada en orden descendente."""
 
     generos = []
 
@@ -120,22 +133,15 @@ def cantidad_ordenada_por_categoria_desc(catalog: list, index_categoria) -> tupl
     return []
 
 def bubble_sort_titulo(catalog:list) -> None:
+    """Ordena el catálogo por título usando el algoritmo de burbuja."""
     n = len(catalog)
     for i in range(n):
         for j in range(0, n - i - 1):
             if catalog[j][INDEX_TITULO] > catalog[j + 1][INDEX_TITULO]:
                 catalog[j], catalog[j + 1] = catalog[j + 1], catalog[j]
 
-def insertion_sort_anio(catalog: list) -> None:
-    for i in range(1, len(catalog)):
-        key = catalog[i]
-        j = i - 1
-        while j >= 0 and catalog[j][INDEX_PRIMERA_PUBLICACION].isdigit() and key[INDEX_PRIMERA_PUBLICACION].isdigit() and int(catalog[j][INDEX_PRIMERA_PUBLICACION]) > int(key[INDEX_PRIMERA_PUBLICACION]):
-            catalog[j + 1] = catalog[j]
-            j -= 1
-        catalog[j + 1] = key
-
 def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
+    """Genera un resumen del catálogo y lo guarda en un archivo JSON."""
     
     cantidad_por_generos = cantidad_ordenada_por_categoria_desc(catalog, INDEX_GENERO)
     libros_publicados = cantidad_ordenada_por_categoria_desc(catalog, INDEX_PRIMERA_PUBLICACION)
@@ -153,6 +159,8 @@ def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
         json.dump(resumen, f, indent=4, ensure_ascii=False)
 
 def display_catalog(catalog: list, limit: int) -> None:
+
+    """Devuelve una lista de libros del catálogo, limitada por el parámetro 'limit'."""
     
     payload = []
 
