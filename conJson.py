@@ -1,7 +1,9 @@
+import tkinter as tk
+from tkinter import messagebox, simpledialog
 from typing import List, Tuple, Any
 from collections import Counter
 import csv
-import json  # ← agregado para usar JSON
+import json  
 
 # Índices para acceder a los campos del catálogo
 INDEX_TITULO = 0
@@ -41,7 +43,7 @@ def send_message(message: str, expected_type: type) -> Any:
                 return entry
 
 def add_book_manual(catalog: List[List[Any]]) -> None:
-    """Pide datos por teclado y añade un nuevo libro al catálogo."""
+    """Pide datos por teclado y añade un nuevo libro al catálogo y al archivo CSV."""
     print("Añadiendo un nuevo libro al catálogo...")
     print("Presiona 0 en cualquier momento para salir.")
 
@@ -57,8 +59,15 @@ def add_book_manual(catalog: List[List[Any]]) -> None:
     genre = send_message("Género: ", str)
     if genre is None: return
 
-    catalog.append([title, author, "", str(year), "", genre])
-    print(f"Libro '{title}' añadido al catálogo.")
+    new_book = [title, author, "", str(year), "", genre]
+    catalog.append(new_book)
+
+    # Escribir en el CSV
+    with open("libros.csv", "a", newline='', encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(new_book)
+
+    print(f"Libro '{title}' añadido al catálogo y guardado en 'libros.csv'.")
 
 def informe_total_ejemplares(catalog: List[List[Any]]) -> str:
     return f"Total de ejemplares: {len(catalog)}"
@@ -204,6 +213,12 @@ def menu() -> None:
             break
         else:
             print("Opción no válida.")
+        
+
+        continuar = input("\n¿Deseás realizar otra operación? (s/n): ").strip().lower()
+        if continuar == "n":
+            print("Saliendo del sistema...")
+            break
 
 def main() -> None:
     menu()
