@@ -16,6 +16,7 @@ from funciones import (
 
 
 def send_message(message: str, expected_type: type) -> None:
+    """Pide al usuario una entrada y la valida según el tipo esperado."""
     while True:
         entry = input(message)
         print("Ingresa '0' para salir en cualquier momento.")
@@ -35,6 +36,8 @@ def send_message(message: str, expected_type: type) -> None:
                 return entry
 
 def handle_promedio_anio(catalog: list) -> None:
+    """Calcula e imprime el año promedio de publicación de los libros en el catálogo."""
+
     promedio = informe_promedio_anio(catalog)
 
     if promedio == 0:
@@ -43,6 +46,8 @@ def handle_promedio_anio(catalog: list) -> None:
     print(f"Año promedio de publicación: {promedio}")
 
 def handle_informe_libros_viejos(catalog: list) -> None:
+    """Muestra los libros publicados antes de un año específico."""
+
     corte = send_message("Mostrar libros anteriores a qué año?: ", int)
     if corte is not None:
         viejos = informe_libros_viejos(catalog, corte)
@@ -59,6 +64,8 @@ def handle_informe_libros_viejos(catalog: list) -> None:
         print("----------------")
 
 def handle_top_autores(catalog: list) -> None:
+    """Muestra los autores más frecuentes en el catálogo."""
+
     top = informe_top_autores(catalog)
 
     if len(top) <=  0:
@@ -69,6 +76,7 @@ def handle_top_autores(catalog: list) -> None:
         print(f"{autor}: {cantidad}")
 
 def handle_catalogo(catalog: list) -> None:
+    """Muestra el catálogo de libros y permite al usuario especificar cuántos libros mostrar."""
     limit = send_message("¿Cuántos libros mostrar?: ", int)
     if limit is not None:
         display = display_catalog(catalog, limit)
@@ -81,6 +89,7 @@ def handle_catalogo(catalog: list) -> None:
             print("----------------")
 
 def handle_informe_genero(catalog: list) -> None:
+    """Muestra el total de libros por género."""
     available_genres = get_genero(catalog)
     if len(available_genres) > 0:
         print("Los géneros disponibles son: " + ", ".join(available_genres))
