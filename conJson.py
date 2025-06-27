@@ -176,6 +176,11 @@ def menu() -> None:
         else:
             print("Opción no válida.")
 
+        continuar = input("\n¿Deseás realizar otra operación? (s/n): ").strip().lower()
+        if continuar == "n":
+            print("Saliendo del sistema...")
+            break
+
 def main() -> None:
     menu()
 
