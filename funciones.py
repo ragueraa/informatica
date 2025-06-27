@@ -66,7 +66,7 @@ def informe_por_genero(catalog, genre: str) -> str:
 
     return total_genre
 
-def informe_promedio_anio(catalog) -> float:
+def informe_promedio_anio(catalog) -> int:
 
     """Devuelve el año promedio de publicación de los libros en el catálogo."""
     total_years = 0
