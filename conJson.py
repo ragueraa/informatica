@@ -125,10 +125,14 @@ def informe_top_autores(catalog, top_n: int = 3) -> list:
                 n+= 1
         counter.append((autor, n))
 
-    print("Autores y sus conteos:", counter)
+
+    counter = insertion_sort_autors(counter)
+
+    
+    return counter[:top_n] if len(counter) > top_n else counter
 
 
-    #insertion sort desc
+def insertion_sort_autors(counter: list) -> list:
 
     for i in range(1, len(counter)):
         valor_actual = counter[i]
@@ -139,11 +143,7 @@ def informe_top_autores(catalog, top_n: int = 3) -> list:
             j -= 1
         counter[j + 1] = valor_actual
 
-    
-    return counter[:top_n] if len(counter) > top_n else counter
-
-
-
+    return counter
     
 def bubble_sort_titulo(catalog:list) -> None:
     n = len(catalog)
