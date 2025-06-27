@@ -1,5 +1,6 @@
 from typing import List, Dict, Tuple, Any
 import csv
+from pprint import pprint
 
 INDEX_TITULO = 0
 INDEX_AUTOR = 1
