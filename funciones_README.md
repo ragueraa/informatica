@@ -5,7 +5,6 @@ El archivo `funciones.py` es el módulo principal que contiene la lógica de neg
 
 ## Dependencias
 El módulo utiliza las siguientes librerías:
-- `pprint`: Para formateo de salida (pretty printing)
 - `csv`: Para manejo de archivos CSV
 - `json`: Para exportación de datos en formato JSON
 
@@ -208,7 +207,7 @@ El módulo define constantes para acceder a los campos del catálogo de libros:
 - Crea una estructura simplificada para visualización
 - Optimiza la presentación de datos al usuario
 
-## Arquitectura y Patrones de Diseño
+## Arquitectura y  Diseño
 
 ### **Separación de Responsabilidades**
 - **Funciones de datos**: Carga y persistencia (`get_catalog`, `add_book_manual`)
