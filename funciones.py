@@ -141,23 +141,35 @@ def bubble_sort_titulo(catalog:list) -> None:
                 catalog[j], catalog[j + 1] = catalog[j + 1], catalog[j]
 
 def guardar_resumen_json(nombre_archivo: str, catalog: list) -> None:
-    """Genera un resumen del catálogo y lo guarda en un archivo JSON."""
-    
-    cantidad_por_generos = cantidad_ordenada_por_categoria_desc(catalog, INDEX_GENERO)
-    libros_publicados = cantidad_ordenada_por_categoria_desc(catalog, INDEX_PRIMERA_PUBLICACION)
-    libro_mas_reciente = libros_publicados[0] if libros_publicados else None
-    libro_mas_antiguo = libros_publicados[-1] if libros_publicados else None
+    total_libros = len(catalog)
+
+    años_validos = [int(row[INDEX_PRIMERA_PUBLICACION]) for row in catalog
+                    if len(row) > INDEX_PRIMERA_PUBLICACION and row[INDEX_PRIMERA_PUBLICACION].isdigit()]
+    libro_mas_antiguo = min(años_validos) if años_validos else None
+    libro_mas_reciente = max(años_validos) if años_validos else None
+
+    conteo_generos = {}
+    for row in catalog:
+        if len(row) > INDEX_GENERO:
+            genero = row[INDEX_GENERO].strip()
+            if genero:
+                if genero in conteo_generos:
+                    conteo_generos[genero] += 1
+                else:
+                    conteo_generos[genero] = 1
 
     resumen = {
-        "total_libros": informe_total_ejemplares(catalog),
+        "total_libros": total_libros,
         "libro_mas_antiguo": libro_mas_antiguo,
         "libro_mas_reciente": libro_mas_reciente,
-        "cantidad_por_genero": cantidad_por_generos,
+        "cantidad_por_genero": conteo_generos
     }
 
     with open(nombre_archivo, "w", encoding="utf-8") as f:
         json.dump(resumen, f, indent=4, ensure_ascii=False)
 
+    print(f"Resumen guardado en '{nombre_archivo}'")
+    
 def display_catalog(catalog: list, limit: int) -> None:
 
     """Devuelve una lista de libros del catálogo, limitada por el parámetro 'limit'."""
